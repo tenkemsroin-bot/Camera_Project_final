@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="../images/logo/logo.jpg" />
+
+    <title>Payment</title>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h1 class="text-2xl font-bold text-blue-600 mb-6 text-center">Payment</h1>
+
+      <form id="payment-form" class="space-y-4">
+        <div>
+          <label class="block mb-1 font-semibold">Name on Card</label>
+          <input
+            type="text"
+            id="name"
+            class="w-full border rounded px-3 py-2"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block mb-1 font-semibold">Card Number</label>
+          <input
+            type="text"
+            id="card-number"
+            class="w-full border rounded px-3 py-2"
+            maxlength="16"
+            required
+          />
+        </div>
+
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block mb-1 font-semibold">Expiry (MM/YY)</label>
+            <input
+              type="text"
+              id="expiry"
+              class="w-full border rounded px-3 py-2"
+              maxlength="5"
+              required
+            />
+          </div>
+          <div class="flex-1">
+            <label class="block mb-1 font-semibold">CVC</label>
+            <input
+              type="text"
+              id="cvc"
+              class="w-full border rounded px-3 py-2"
+              maxlength="3"
+              required
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
+        >
+          Pay Now
+        </button>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      const form = document.getElementById("payment-form");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        // Simple form validation (could be improved)
+        const name = document.getElementById("name").value;
+        const card = document.getElementById("card-number").value;
+        const expiry = document.getElementById("expiry").value;
+        const cvc = document.getElementById("cvc").value;
+
+        if (!name || !card || !expiry || !cvc) return;
+
+        // Simulate payment success
+        Swal.fire({
+          icon: "success",
+          title: "Payment Successful!",
+          text: "Thank you for your purchase.",
+          confirmButtonText: "OK",
+        }).then(() => {
+          // Clear cart
+          localStorage.removeItem("cart");
+          window.location.href = "/index.html"; // redirect to home
+        });
+      });
+    </script>
+  </body>
+</html>

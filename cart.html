@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>My Cart</title>
+  </head>
+
+  <body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md p-4">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-[#0071e3]">🛒 My Cart</h1>
+        <a href="/page/shop.html" class="text-[#0071e3] hover:underline"
+          >Back to Shop</a
+        >
+      </div>
+    </nav>
+
+    <!-- Cart Section -->
+    <section class="max-w-5xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
+      <h2 class="text-3xl font-bold mb-6 text-[#0071e3]">Your Products</h2>
+
+      <div id="cart-items" class="space-y-4"></div>
+
+      <div class="flex justify-between items-center mt-8 border-t pt-4">
+        <h3 class="text-2xl font-bold text-gray-800">
+          Total: $<span id="total-price">0.00</span>
+        </h3>
+
+        <div class="flex gap-3">
+          <button
+            id="clear-cart"
+            class="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition"
+          >
+            Clear Cart
+          </button>
+
+          <button
+            id="checkout-btn"
+            class="bg-[#0071e3] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#005bb5] transition"
+          >
+            Checkout
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const cartContainer = document.getElementById("cart-items");
+      const totalPriceEl = document.getElementById("total-price");
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      function renderCart() {
+        cartContainer.innerHTML = "";
+        let total = 0;
+
+        if (cart.length === 0) {
+          cartContainer.innerHTML = `<p class="text-gray-600">Your cart is empty.</p>`;
+          totalPriceEl.textContent = "0.00";
+          return;
+        }
+
+        cart.forEach((item, index) => {
+          total += item.price * item.quantity;
+
+          const itemEl = document.createElement("div");
+          itemEl.className = "flex items-center justify-between border-b pb-4";
+
+          itemEl.innerHTML = `
+          <div class="flex items-center gap-4">
+            <img src="${item.image}" alt="${
+            item.name
+          }" class="w-20 h-20 object-cover rounded-lg border" />
+            <div>
+              <h4 class="text-lg font-semibold text-gray-800">${item.name}</h4>
+              <p class="text-gray-600">$${item.price.toFixed(2)}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1 bg-gray-200 rounded decrease">-</button>
+            <span class="font-semibold">${item.quantity}</span>
+            <button class="px-3 py-1 bg-gray-200 rounded increase">+</button>
+            <button class="text-red-500 font-bold ml-4 remove">x</button>
+          </div>
+        `;
+
+          // Increase quantity
+          itemEl.querySelector(".increase").addEventListener("click", () => {
+            item.quantity++;
+            updateCart();
+          });
+
+          // Decrease quantity
+          itemEl.querySelector(".decrease").addEventListener("click", () => {
+            if (item.quantity > 1) {
+              item.quantity--;
+            } else {
+              cart.splice(index, 1);
+            }
+            updateCart();
+          });
+
+          // Remove item
+          itemEl.querySelector(".remove").addEventListener("click", () => {
+            cart.splice(index, 1);
+            updateCart();
+          });
+
+          cartContainer.appendChild(itemEl);
+        });
+
+        totalPriceEl.textContent = total.toFixed(2);
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+
+      function updateCart() {
+        renderCart();
+      }
+
+      // Clear Cart button
+      document.getElementById("clear-cart").addEventListener("click", () => {
+        Swal.fire({
+          title: "Are you sure?",
+          text: "Do you really want to clear your cart?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, clear it",
+          cancelButtonText: "No, keep items",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            localStorage.removeItem("cart");
+            cart = [];
+            renderCart();
+            Swal.fire("Cleared!", "Your cart has been emptied.", "success");
+          }
+        });
+      });
+
+      // Checkout button
+      document.getElementById("checkout-btn").addEventListener("click", () => {
+        if (cart.length === 0) {
+          Swal.fire(
+            "Your cart is empty",
+            "Please add some products before checkout.",
+            "info"
+          );
+          return;
+        }
+
+        Swal.fire({
+          title: "Checkout Successful!",
+          text: "Thank you for your purchase.",
+          icon: "success",
+          confirmButtonText: "Back to Shop",
+        }).then(() => {
+          localStorage.removeItem("cart"); // clear cart after checkout
+          window.location.href = "/page/shop.html"; // redirect to shop
+        });
+      });
+
+      renderCart();
+    </script>
+  </body>
+</html>
+
+{ id: '1', name: 'Sony ZV-E1', description: 'The Sony ZV-E1 is a compact,
+full-frame mirrorless camera designed specifically for high-quality video
+content creation.', price: 499.99, image: '/sony-zv-e1-camera.jpg', }, { id:
+'2', name: 'Sony A7-III', description: 'The Sony A7 III is a full-frame
+mirrorless camera released in 2018, known for its balance of features,
+performance, and value.', price: 1999.00, image: '/sony-a7-iii-camera.jpg', }, {
+id: '3', name: 'Sony A7 C', description: 'Sony A7C Review | Read This Before You
+Buy It! The Sony A7C is a compact, full-frame mirrorless camera designed for
+creators.', price: 1799.00, image: '/sony-a7c-camera.jpg', }, { id: '4', name:
+'Sony A7R V', description: 'A high-resolution full-frame mirrorless camera with
+61MP sensor, designed for professional photographers and videographers.', price:
+3298.00, image: '/sony-a7r-v-camera.jpg', }, { id: '5', name: 'Sony A6700',
+description: 'Advanced APS-C mirrorless camera with real-time tracking and AI
+autofocus, perfect for hybrid photographers and videographers.', price: 1398.00,
+image: '/sony-a6700-camera.jpg', }, { id: '6', name: 'Sony FX30', description:
+'Professional compact cinema camera designed for content creators, combining 4K
+recording with advanced autofocus technology.', price: 2498.00, image:
+'/sony-fx30-cinema-camera.jpg', },

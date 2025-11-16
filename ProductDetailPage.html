@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="../images/logo/logo.jpg" />
+
+    <title>Product Detail</title>
+    <style>
+      .selected-border {
+        border-color: #2563eb; /* blue-600 */
+        box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Back Button -->
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <button
+        id="back-btn"
+        class="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold"
+      >
+        ← Back
+      </button>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Product Images -->
+        <div class="flex flex-col gap-4">
+          <div
+            class="bg-gray-100 rounded-lg p-8 flex items-center justify-center h-96"
+          >
+            <img
+              id="main-image"
+              src="images/placeholder.svg"
+              alt="Product"
+              class="object-contain max-h-full"
+            />
+          </div>
+          <div id="sub-images" class="flex gap-3 overflow-x-auto pb-2"></div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="flex flex-col justify-between">
+          <div>
+            <h1 id="product-name" class="text-4xl font-bold text-blue-600 mb-4">
+              Product Name
+            </h1>
+            <p id="product-description" class="text-lg text-gray-600 mb-6">
+              Full description goes here.
+            </p>
+
+            <!-- Price -->
+            <div class="mb-8">
+              <p class="text-gray-500 text-sm mb-2">Price</p>
+              <p id="product-price" class="text-4xl font-bold text-gray-800">
+                $0.00
+              </p>
+            </div>
+
+            <!-- Quantity Selector -->
+            <div class="mb-8 flex items-center gap-4">
+              <p class="text-gray-700 font-semibold">Quantity:</p>
+              <div class="flex items-center border border-gray-300 rounded">
+                <button id="decrease-qty" class="px-4 py-2 hover:bg-gray-100">
+                  −
+                </button>
+                <span id="quantity" class="px-4 py-2 font-semibold">1</span>
+                <button id="increase-qty" class="px-4 py-2 hover:bg-gray-100">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <button
+              id="add-to-cart"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg mb-4 flex items-center justify-center gap-2"
+            >
+              🛒 Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specifications -->
+      <div class="mt-16">
+        <h2 class="text-2xl font-bold text-blue-600 mb-6">Specifications</h2>
+        <div
+          id="specs-grid"
+          class="grid grid-cols-1 md:grid-cols-2 gap-6"
+        ></div>
+      </div>
+    </main>
+
+    <!-- Load external product data -->
+    <script src="../data/products.js"></script>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get("id");
+      const product = products.find((p) => p.id === productId);
+
+      if (!product) {
+        alert("Product not found!");
+        window.location.href = "index.html";
+      } else {
+        const mainImage = document.getElementById("main-image");
+        const subImagesDiv = document.getElementById("sub-images");
+
+        // Set product info
+        document.getElementById("product-name").textContent = product.name;
+        document.getElementById("product-description").textContent =
+          product.description;
+        document.getElementById(
+          "product-price"
+        ).textContent = `$${product.price.toFixed(2)}`;
+        mainImage.src = `../${product.image}`;
+
+        // Render sub-images
+        subImagesDiv.innerHTML = "";
+        const images = product.subImages || [product.image];
+        images.forEach((img, index) => {
+          const btn = document.createElement("button");
+          btn.className =
+            "flex-shrink-0 w-20 h-20 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-all";
+          if (index === 0) btn.classList.add("selected-border");
+
+          const imageEl = document.createElement("img");
+          imageEl.src = `../${img}`; // or `./images/${img}`
+          imageEl.alt = `${product.name} view ${index + 1}`;
+          imageEl.className = "w-full h-full object-cover rounded";
+
+          btn.appendChild(imageEl);
+          btn.addEventListener("click", () => {
+            mainImage.src = `../${img}`;
+            Array.from(subImagesDiv.children).forEach((c) =>
+              c.classList.remove("selected-border")
+            );
+            btn.classList.add("selected-border");
+          });
+
+          subImagesDiv.appendChild(btn);
+        });
+
+        // Render specifications
+        const specsGrid = document.getElementById("specs-grid");
+        specsGrid.innerHTML = "";
+        Object.entries(product.specs).forEach(([key, value]) => {
+          const card = document.createElement("div");
+          card.className = "bg-white p-4 rounded-lg shadow";
+          card.innerHTML = `<p class="text-gray-500 text-sm mb-1 capitalize">${key}</p>
+                          <p class="text-lg font-semibold text-gray-800">${value}</p>`;
+          specsGrid.appendChild(card);
+        });
+      }
+
+      // Quantity logic
+      let quantity = 1;
+      const quantityEl = document.getElementById("quantity");
+      document.getElementById("increase-qty").addEventListener("click", () => {
+        quantity++;
+        quantityEl.textContent = quantity;
+      });
+      document.getElementById("decrease-qty").addEventListener("click", () => {
+        if (quantity > 1) quantity--;
+        quantityEl.textContent = quantity;
+      });
+
+      // Add to cart
+      // document.getElementById("add-to-cart").addEventListener("click", () => {
+      //   alert(`Added ${quantity} x ${product.name} to cart!`);
+      // });
+
+      // Back button
+      document.getElementById("back-btn").addEventListener("click", () => {
+        window.history.back();
+      });
+
+      document.getElementById("add-to-cart").addEventListener("click", () => {
+        // Check if user is logged in
+        if (localStorage.getItem("loggedIn") !== "true") {
+          Swal.fire({
+            icon: "warning",
+            title: "Please login first!",
+            text: "You must be logged in to add items to your cart.",
+            confirmButtonText: "Go to Login",
+          }).then(() => {
+            window.location.href = "./login.html"; // redirect to login
+          });
+          return; // stop execution
+        }
+
+        // Get existing cart from localStorage or empty array
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // Check if product already in cart
+        const existingIndex = cart.findIndex((item) => item.id === product.id);
+        if (existingIndex >= 0) {
+          cart[existingIndex].quantity += quantity; // increase quantity if exists
+        } else {
+          cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: quantity,
+            image: product.image,
+          });
+        }
+
+        // Save back to localStorage
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Saved!",
+          showConfirmButton: false,
+          timer: 1500,
+          width: "180px",
+          padding: "0.5rem",
+        });
+      });
+    </script>
+  </body>
+</html>

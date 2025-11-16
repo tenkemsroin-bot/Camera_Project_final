@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script
+      src="https://kit.fontawesome.com/9152de16db.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="icon" type="image/png" href="../images/logo/logo.jpg" />
+    <title>Camera Shop</title>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <script>
+      // Initialize dark mode before page loads to prevent flash
+      if (localStorage.getItem("darkMode") === "true") {
+        document.documentElement.classList.add("dark");
+      }
+    </script>
+  </head>
+
+  <style>
+    /* Infinite scrolling marquee */
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .animate-marquee {
+      display: flex;
+      animation: marquee 25s linear infinite;
+    }
+
+    /* Duplicate content for seamless loop */
+    .animate-marquee > * {
+      flex-shrink: 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .brand-card {
+        min-width: 180px;
+        padding: 3;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .animate-marquee {
+        animation-duration: 30s;
+      }
+    }
+
+    /* Smooth transitions for dark mode */
+    .dark-mode-transition * {
+      transition: background-color 0.3s ease, color 0.3s ease,
+        border-color 0.3s ease;
+    }
+  </style>
+  <body class="bg-gray-100 dark:bg-gray-900 dark-mode-transition">
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+        <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          CAMERA-SHOP
+        </h1>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex gap-6 items-center">
+          <a
+            href="../index.html"
+            class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+            >Home</a
+          >
+          <a
+            href="./shop.html"
+            class="text-blue-600 dark:text-blue-400 font-semibold"
+            >Shop</a
+          >
+          <a
+            href="./about.html"
+            class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+            >About</a
+          >
+          <a
+            href="./contact.html"
+            class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+            >Contact</a
+          >
+
+          <!-- Dark Mode Toggle for Desktop -->
+          <button
+            id="darkModeToggleDesktop"
+            class="text-gray-700 dark:text-gray-200 text-xl"
+          >
+            <i id="darkModeIconDesktop" class="fa-regular fa-moon"></i>
+          </button>
+
+          <!-- Desktop Buttons -->
+          <button
+            id="cart-btn"
+            class="relative text-2xl text-gray-700 dark:text-gray-300"
+          >
+            🛒
+            <span
+              id="cart-count"
+              class="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs"
+            >
+              0
+            </span>
+          </button>
+        </nav>
+
+        <!-- Mobile Buttons -->
+        <div class="flex items-center md:hidden gap-4">
+          <!-- Dark Mode Toggle for Mobile -->
+          <button
+            id="darkModeToggleMobile"
+            class="text-gray-700 dark:text-gray-200 text-xl"
+          >
+            <i id="darkModeIconMobile" class="fa-regular fa-moon"></i>
+          </button>
+
+          <button
+            id="cart-btn-mobile"
+            class="relative text-2xl text-gray-700 dark:text-gray-300"
+          >
+            🛒
+            <span
+              id="cart-count-mobile"
+              class="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs"
+            >
+              0
+            </span>
+          </button>
+          <button
+            id="mobileMenuBtn"
+            class="text-2xl text-gray-700 dark:text-gray-300"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <nav
+        id="mobileMenu"
+        class="hidden md:hidden flex-col bg-white dark:bg-gray-800 border-t dark:border-gray-700"
+      >
+        <a
+          href="../index.html"
+          class="block p-3 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
+          >Home</a
+        >
+        <a
+          href="./shop.html"
+          class="block p-3 hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-700 dark:text-blue-400 font-semibold"
+          >Shop</a
+        >
+        <a
+          href="./about.html"
+          class="block p-3 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
+          >About</a
+        >
+        <a
+          href="./contact.html"
+          class="block p-3 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
+          >Contact</a
+        >
+        <!-- Mobile Login -->
+        <a
+          href="#"
+          id="loginBtnMobile"
+          class="block p-3 bg-[#0071e3] dark:bg-blue-700 text-white rounded-lg text-center mt-2 hover:bg-[#f7f2ee] dark:hover:bg-gray-700 hover:text-[#0071e3] dark:hover:text-blue-400"
+        >
+          Login
+        </a>
+      </nav>
+    </header>
+
+    <!-- Search & Filters -->
+    <div
+      class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800"
+    >
+      <h2 class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+        Our Collection
+      </h2>
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Search products..."
+          class="p-3 border dark:border-gray-600 rounded w-full sm:w-48 focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+        />
+        <select
+          id="categoryFilter"
+          class="p-2 border dark:border-gray-600 rounded w-full sm:w-auto bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+        >
+          <option value="">All Categories</option>
+        </select>
+        <select
+          id="sortPrice"
+          class="p-2 border dark:border-gray-600 rounded w-full sm:w-auto bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+        >
+          <option value="">Sort by : Featured</option>
+          <option value="low-high">Price: Low to High</option>
+          <option value="high-low">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <section class="max-w-7xl mx-auto pb-10 py-3">
+      <div
+        id="product-list"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+      ></div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div
+      id="cart-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 w-full max-w-md rounded-lg flex flex-col max-h-[90vh] overflow-y-auto"
+      >
+        <div
+          class="flex justify-between items-center p-4 border-b dark:border-gray-700"
+        >
+          <h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            Your Cart
+          </h2>
+          <button
+            id="close-cart"
+            class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-lg font-bold"
+          >
+            ✕
+          </button>
+        </div>
+        <div id="cart-items" class="p-4 flex-1 space-y-4 overflow-y-auto"></div>
+        <div class="p-4 border-t dark:border-gray-700">
+          <div
+            class="flex justify-between font-semibold text-lg mb-2 dark:text-white"
+          >
+            <span>Total:</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+          <button
+            id="checkout-btn"
+            class="w-full bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white py-3 rounded font-semibold"
+          >
+            Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+
+     <!-- Brands Marquee -->
+  <section class="bg-white dark:bg-gray-800 py-6">
+    <div class="max-w-7xl mx-auto px-4">
+      <!-- Header -->
+      <div class="flex items-center mb-4">
+        <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M8 12h8"></path>
+        </svg>
+        <span class="text-2xl font-bold text-[#0071e3] dark:text-blue-400">Camera-Shop Brands</span>
+      </div>
+
+      <!-- Marquee -->
+      <div class="overflow-hidden relative">
+        <div class="flex space-x-8 animate-marquee">
+          <!-- Repeat your brand cards here -->
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M20 5h-3.172l-1.414-1.414A2 2 0 0014 3H10a2 2 0 00-1.414.586L7.172 5H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8zm7-9h-2V6h2v2z" />
+            </svg>
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Sony
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                High-quality Sony cameras for professional and casual
+                photography.
+              </div>
+            </div>
+
+          </div>
+
+          <div
+            class="brand-card bg-[#fff0f0] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+            <svg class="w-8 h-8 text-[#D31C1C] dark:text-red-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M20 5h-3.172l-1.414-1.414A2 2 0 0014 3H10a2 2 0 00-1.414.586L7.172 5H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8zm7-9h-2V6h2v2z" />
+            </svg>
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Canon
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Explore Canon cameras for reliable and high-quality
+                photography.
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Lumix-Style Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M4 7h2.2l1.3-2.2A2 2 0 0 1 9.3 4h5.4a2 2 0 0 1 1.8 1.1L18 7h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zm8 11.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm7-9.5h-2.2c-.3 0-.6-.2-.8-.4l-.5-.8h3.5v1.2z" />
+              <rect x="18.5" y="9" width="2" height="8" rx=".8" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Lumix
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Panasonic Lumix cameras known for video excellence and portability.
+              </div>
+            </div>
+
+          </div>
+
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Nikon-Style Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M4 8h2l1-2.2A2 2 0 0 1 8.8 4h6.4A2 2 0 0 1 17 5.8L18 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zm8 10a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Nikon
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Nikon cameras delivering outstanding image clarity and dynamic range.
+              </div>
+            </div>
+
+          </div>
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Fujifilm-Style Retro Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M3 8h3l1-1.6A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.7.9L18 8h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm4 0h2V7H7v1zm5 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Fujifilm
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Fujifilm cameras featuring film-like colors and classic retro designs.
+              </div>
+            </div>
+
+          </div>
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Olympus-Style Compact Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M3 8h3l.8-1.5A2 2 0 0 1 8.6 5h6.8a2 2 0 0 1 1.8 1.1L18 8h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Olympus
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Olympus cameras designed for travel with lightweight Micro Four Thirds bodies.
+              </div>
+            </div>
+
+          </div>
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Leica-Style Rangefinder Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M3 9h3l1-2a2 2 0 0 1 1.8-1h6.4a2 2 0 0 1 1.8 1l1 2h3a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zm3-1h2V7H6v1zm6 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Leica
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Leica cameras offering premium craftsmanship and legendary optical quality.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+    <!-- Footer -->
+    <footer class="bg-[#0071e3] dark:bg-gray-800 text-white py-10">
+      <div
+        class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8"
+      >
+        <!-- Logo & Brand -->
+        <div class="flex items-center gap-3">
+          <svg
+            class="w-8 h-8 text-white"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 12h8"></path>
+          </svg>
+          <span class="text-2xl font-bold">CAMERA-STORE</span>
+        </div>
+        <!-- Footer Links -->
+        <div class="flex flex-wrap gap-6 text-base font-medium">
+          <a href="/index.html" class="hover:underline">Home</a>
+          <a href="/page/about.html" class="hover:underline">About</a>
+          <a href="/page/shop.html" class="hover:underline">Shop</a>
+          <a href="/page/contact.html" class="hover:underline">Contact</a>
+          <a href="#" class="hover:underline">Privacy Policy</a>
+        </div>
+        <!-- Social Icons -->
+        <div class="flex gap-4">
+          <!-- Icorn Facebook -->
+          <a
+            href="#"
+            aria-label="Facebook"
+            class="hover:text-[#f7f2ee] transition"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 5 3.657 9.127 8.438 9.877v-6.987h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.127 22 17 22 12z"
+              />
+            </svg>
+          </a>
+          <!-- Icorn Telegram -->
+          <a
+            href="https://t.me/yourusername"
+            target="_blank"
+            aria-label="Telegram"
+            class="hover:text-[#0088cc] transition duration-300"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M9.999 15.172l-.387 4.327c.553 0 .793-.237 1.08-.521l2.588-2.47 5.367 3.925c.984.54 1.684.256 1.938-.91l3.507-16.426c.36-1.671-.604-2.322-1.66-1.92L1.23 10.38c-1.61.63-1.585 1.54-.274 1.95l4.946 1.545L17.57 6.84c.603-.39 1.152-.175.7.25L9.999 15.172z"
+              />
+            </svg>
+          </a>
+          <!-- Icorn Twitter -->
+          <a
+            href="#"
+            aria-label="Twitter"
+            class="hover:text-[#f7f2ee] transition"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M22.46 6c-.77.35-1.6.59-2.47.7a4.3 4.3 0 001.88-2.37 8.59 8.59 0 01-2.72 1.04A4.28 4.28 0 0016.11 4c-2.37 0-4.29 1.92-4.29 4.29 0 .34.04.67.11.99C7.69 9.13 4.07 7.13 1.64 4.16c-.37.63-.58 1.36-.58 2.14 0 1.48.75 2.79 1.89 3.56a4.28 4.28 0 01-1.94-.54v.05c0 2.07 1.47 3.8 3.42 4.19-.36.1-.74.16-1.13.16-.28 0-.54-.03-.8-.08.54 1.68 2.11 2.9 3.97 2.93A8.6 8.6 0 012 19.54a12.13 12.13 0 006.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19-.01-.38-.02-.57A8.72 8.72 0 0024 5.5a8.6 8.6 0 01-2.54.7z"
+              />
+            </svg>
+          </a>
+          <!-- Icorn Instagram -->
+          <a
+            href="#"
+            aria-label="Instagram"
+            class="hover:text-[#f7f2ee] transition"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5A4.25 4.25 0 0016.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 110 10.5 5.25 5.25 0 010-10.5zm0 1.5a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zm5.25.75a1 1 0 110 2 1 1 0 010-2z"
+              />
+            </svg>
+          </a>
+
+          <!-- Icorn Tiktok -->
+          <a
+            href="#"
+            aria-label="TikTok"
+            class="hover:text-[#f7f2ee] transition"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12.75 2h2.25a4.5 4.5 0 004.5 4.5v2.25a6.75 6.75 0 01-4.5-1.65v7.65a5.25 5.25 0 11-5.25-5.25h.75v2.25h-.75a3 3 0 100 6 3 3 0 003-3V2z"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="mt-8 text-center text-sm text-[#f7f2ee]">
+        © 2023 CAMERA-STORE. All rights reserved.
+      </div>
+    </footer>
+    <script src="../data/products.js"></script>
+    <script>
+      // Dark Mode Functionality
+      const darkModeToggleDesktop = document.getElementById(
+        "darkModeToggleDesktop"
+      );
+      const darkModeToggleMobile = document.getElementById(
+        "darkModeToggleMobile"
+      );
+      const darkModeIconDesktop = document.getElementById(
+        "darkModeIconDesktop"
+      );
+      const darkModeIconMobile = document.getElementById("darkModeIconMobile");
+
+      // Check for saved dark mode preference
+      const isDarkMode = localStorage.getItem("darkMode") === "true";
+
+      // Apply dark mode if enabled
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark");
+        darkModeIconDesktop.classList.remove("fa-moon");
+        darkModeIconDesktop.classList.add("fa-sun");
+        darkModeIconMobile.classList.remove("fa-moon");
+        darkModeIconMobile.classList.add("fa-sun");
+      }
+
+      // Toggle dark mode
+      function toggleDarkMode() {
+        const isDark = document.documentElement.classList.toggle("dark");
+
+        // Update icons
+        if (isDark) {
+          darkModeIconDesktop.classList.remove("fa-moon");
+          darkModeIconDesktop.classList.add("fa-sun");
+          darkModeIconMobile.classList.remove("fa-moon");
+          darkModeIconMobile.classList.add("fa-sun");
+        } else {
+          darkModeIconDesktop.classList.remove("fa-sun");
+          darkModeIconDesktop.classList.add("fa-moon");
+          darkModeIconMobile.classList.remove("fa-sun");
+          darkModeIconMobile.classList.add("fa-moon");
+        }
+
+        // Save preference
+        localStorage.setItem("darkMode", isDark);
+      }
+
+      // Add event listeners
+      darkModeToggleDesktop.addEventListener("click", toggleDarkMode);
+      darkModeToggleMobile.addEventListener("click", toggleDarkMode);
+
+      // Rest of your existing JavaScript code
+      const productList = document.getElementById("product-list");
+      const searchInput = document.getElementById("search-input");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const sortPrice = document.getElementById("sortPrice");
+
+      // Load Categories
+      const categories = [
+        ...new Set(products.map((p) => p.category).filter(Boolean)),
+      ];
+      categories.forEach(
+        (c) =>
+          (categoryFilter.innerHTML += `<option value="${c}">${c}</option>`)
+      );
+
+      function generateStars(rating) {
+        const full = Math.floor(rating);
+        const half = rating % 1 >= 0.5 ? 1 : 0;
+        const empty = 5 - full - half;
+
+        let stars = "";
+        for (let i = 0; i < full; i++)
+          stars += `<i class="fa-solid fa-star text-yellow-400"></i>`;
+        for (let i = 0; i < half; i++)
+          stars += `<i class="fa-solid fa-star-half-stroke text-yellow-400"></i>`;
+        for (let i = 0; i < empty; i++)
+          stars += `<i class="fa-regular fa-star text-yellow-400"></i>`;
+        return stars;
+      }
+
+      function renderProducts() {
+        let filtered = [...products];
+        const keyword = searchInput.value.toLowerCase();
+        if (keyword)
+          filtered = filtered.filter((p) =>
+            p.name.toLowerCase().includes(keyword)
+          );
+        if (categoryFilter.value)
+          filtered = filtered.filter(
+            (p) => p.category === categoryFilter.value
+          );
+        if (sortPrice.value === "low-high")
+          filtered.sort((a, b) => a.price - b.price);
+        if (sortPrice.value === "high-low")
+          filtered.sort((a, b) => b.price - a.price);
+
+        productList.innerHTML = "";
+        if (filtered.length === 0) {
+          productList.innerHTML =
+            "<p class='col-span-full text-center py-10 text-gray-500 dark:text-gray-400'>No products found!</p>";
+          return;
+        }
+        filtered.forEach((p) => {
+          const card = document.createElement("div");
+          card.className =
+            "bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg flex flex-col";
+          card.innerHTML = `
+        <img src="../${p.image}" class="h-48 object-cover rounded mb-2"/>
+        <h3 class="font-bold dark:text-white">${p.name}</h3>
+        <p class="text-gray-500 dark:text-gray-300 text-sm mb-2 line-clamp-1">${
+          p.description
+        }</p>
+        <p class="font-semibold mb-2 dark:text-white">$${p.price.toFixed(2)}</p>
+
+          <div class="mb-2 dark:text-gray-300">
+        ${generateStars(p.rating)} ${p.rating} | <span>${p.views} views</span>
+      </div>
+        <div class="flex w-full  justify-between">
+          <button class="bg-blue-600 dark:bg-blue-700 text-white px-3 flex gap-2 rounded hover:bg-blue-700 dark:hover:bg-blue-600 add-cart items-center cursor-pointer uppercase">Add to Cart<i class="fa-solid fa-cart-shopping"></i></button>
+
+        <button class="bg-blue-600 dark:bg-blue-700 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600">
+          <a href="./ProductDetailPage.html?id=${
+            p.id
+          }" class="px-3 py-2 text-white  flex gap-2 items-center">View<i class="fa-solid fa-eye"></i></a>
+          </button>
+      
+      </div>
+      `;
+          card
+            .querySelector(".add-cart")
+            .addEventListener("click", () => addToCart(p));
+          productList.appendChild(card);
+        });
+      }
+
+      function isLoggedIn() {
+        return localStorage.getItem("loggedIn") === "true";
+      }
+      function addToCart(product) {
+        if (!isLoggedIn()) {
+          Swal.fire({
+            icon: "warning",
+            title: "Please log in first",
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+          return;
+        }
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const found = cart.find((i) => i.id === product.id);
+        if (found) found.quantity++;
+        else cart.push({ ...product, quantity: 1 });
+        localStorage.setItem("cart", JSON.stringify(cart));
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Saved!",
+          showConfirmButton: false,
+          timer: 1500,
+          width: "180px",
+          padding: "0.5rem",
+        });
+        updateCartCount();
+      }
+
+      function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const total = cart.reduce((sum, i) => sum + i.quantity, 0);
+        document.getElementById("cart-count").textContent = total;
+        document.getElementById("cart-count-mobile").textContent = total;
+      }
+
+      // Cart Modal
+      const cartModal = document.getElementById("cart-modal");
+      document.getElementById("cart-btn").addEventListener("click", () => {
+        renderCartModal();
+        cartModal.classList.remove("hidden");
+      });
+
+      document
+        .getElementById("cart-btn-mobile")
+        .addEventListener("click", () => {
+          renderCartModal();
+          cartModal.classList.remove("hidden");
+        });
+      document
+        .getElementById("close-cart")
+        .addEventListener("click", () => cartModal.classList.add("hidden"));
+      document.getElementById("checkout-btn").addEventListener("click", () => {
+        cartModal.classList.add("hidden");
+        window.location.href = "payment.html";
+      });
+
+      function renderCartModal() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cartItemsDiv = document.getElementById("cart-items");
+        const cartTotal = document.getElementById("cart-total");
+        cartItemsDiv.innerHTML = "";
+        if (cart.length === 0) {
+          cartItemsDiv.innerHTML =
+            "<p class='text-gray-500 dark:text-gray-400'>Cart is empty</p>";
+          cartTotal.textContent = "$0.00";
+          return;
+        }
+        let total = 0;
+        cart.forEach((item, idx) => {
+          total += item.price * item.quantity;
+          const div = document.createElement("div");
+          div.className =
+            "flex justify-between items-center border-b dark:border-gray-700 py-2";
+          div.innerHTML = `
+        <div class="flex items-center gap-2">
+          <img src="../${item.image}" class="w-12 h-12 object-cover rounded"/>
+          <div>
+            <p class="dark:text-white">${item.name}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">$${item.price.toFixed(
+              2
+            )} x ${item.quantity}</p>
+          </div>
+        </div>
+        <button data-idx="${idx}" class="text-red-500 font-bold hover:text-red-700">✕</button>
+      `;
+          div.querySelector("button").addEventListener("click", () => {
+            cart.splice(idx, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCartModal();
+            updateCartCount();
+          });
+          cartItemsDiv.appendChild(div);
+        });
+        cartTotal.textContent = `$${total.toFixed(2)}`;
+      }
+
+      searchInput.addEventListener("input", renderProducts);
+      categoryFilter.addEventListener("change", renderProducts);
+      sortPrice.addEventListener("change", renderProducts);
+
+      // Init
+      renderProducts();
+      updateCartCount();
+    </script>
+  </body>
+</html>
+
+<script>
+  // Mobile menu toggle
+  const mobileBtn = document.getElementById("mobileMenuBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  mobileBtn.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+
+  // Login/Logout logic for desktop and mobile
+  const loginBtnMobile = document.getElementById("loginBtnMobile");
+
+  function updateLoginButtons() {
+    const loggedIn = localStorage.getItem("loggedIn") === "true";
+
+    if (!loginBtnMobile) {
+      console.error("loginBtnMobile NOT FOUND!");
+      return;
+    }
+
+    if (loggedIn) {
+      loginBtnMobile.textContent = "Logout";
+      loginBtnMobile.href = "#";
+
+      loginBtnMobile.onclick = () => {
+        localStorage.clear(); // remove all login data
+        mobileMenu.classList.add("hidden");
+        window.location.href = "./login.html";
+      };
+    } else {
+      loginBtnMobile.textContent = "Login";
+      loginBtnMobile.href = "./login.html";
+    }
+  }
+
+  updateLoginButtons();
+</script>
