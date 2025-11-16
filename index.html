@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAMERA-SHOP</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://kit.fontawesome.com/9152de16db.js" crossorigin="anonymous"></script>
+  <link rel="icon" type="image/png" href="./images/logo/logo.jpg" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+    };
+  </script>
+  <script src="./data/products.js"></script>
+
+  <style>
+    /* Hover effect on card */
+    .card-hover {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 0;
+    }
+
+    .card-hover:hover {
+      transform: scale(1.01);
+      cursor: pointer;
+      /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); */
+    }
+
+    /* Dark mode transition */
+    .dark-mode-transition * {
+      transition: background-color 0.3s ease, color 0.3s ease,
+        border-color 0.3s ease;
+    }
+  </style>
+
+  <style>
+    .carousel-item img {
+      max-height: 800px;
+      object-fit: cover;
+      width: 100%;
+      margin: auto;
+    }
+
+    .carousel-caption {
+      background: rgba(26, 22, 217, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+
+  <style>
+    /* Infinite scrolling marquee */
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .animate-marquee {
+      display: flex;
+      animation: marquee 25s linear infinite;
+    }
+
+    /* Duplicate content for seamless loop */
+    .animate-marquee>* {
+      flex-shrink: 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .brand-card {
+        min-width: 180px;
+        padding: 3;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .animate-marquee {
+        animation-duration: 30s;
+      }
+    }
+  </style>
+
+  <script>
+    // Initialize dark mode before page loads to prevent flash
+    if (localStorage.getItem("darkMode") === "true") {
+      document.documentElement.classList.add("dark");
+    }
+  </script>
+</head>
+
+<body class="dark-mode-transition bg-gray-100 dark:bg-gray-900">
+  <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+      <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+        CAMERA-SHOP
+      </h1>
+
+      <!-- Desktop Menu -->
+      <nav class="hidden md:flex gap-6 items-center">
+        <a href="./index.html" class="text-blue-600 dark:text-blue-400 font-semibold">Home</a>
+        <a href="./page/shop.html"
+          class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Shop</a>
+        <a href="./page/about.html"
+          class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">About</a>
+        <a href="./page/contact.html"
+          class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
+
+        <!-- Dark Mode Toggle for Desktop -->
+        <button id="darkModeToggleDesktop" class="text-gray-700 dark:text-gray-200 text-xl">
+          <i id="darkModeIconDesktop" class="fa-regular fa-moon"></i>
+        </button>
+        <!-- Desktop Login -->
+        <a id="loginBtnDesktop"
+          class="bg-[#0071e3] dark:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#f7f2ee] dark:hover:bg-gray-700 hover:text-[#0071e3] dark:hover:text-blue-400 border border-[#0071e3] dark:border-blue-700 transition">
+          Login
+        </a>
+
+        <!-- Desktop Sign Up -->
+        <!-- <a id="signupBtnDesktop" class="bg-[#0071e3] dark:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold 
+          hover:bg-[#f7f2ee] dark:hover:bg-gray-700 hover:text-[#0071e3] dark:hover:text-blue-400 
+          border border-[#0071e3] dark:border-blue-700 transition" href="/page/signup.html">
+          Sign Up
+        </a> -->
+
+
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <div class="flex items-center gap-5 md:hidden">
+        <!-- Dark Mode Toggle for Mobile -->
+
+        <button id="darkModeToggleMobile" class="text-gray-700 dark:text-gray-200 text-xl">
+          <i id="darkModeIconMobile" class="fa-regular fa-moon"></i>
+        </button>
+
+        <button id="mobileMenuBtn"
+          class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none">
+          <i class="fa-solid fa-bars text-2xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <nav id="mobileMenu" class="hidden md:hidden flex-col bg-white dark:bg-gray-800 border-t dark:border-gray-700">
+      <a href="./index.html" class="block p-3 text-blue-600 dark:text-blue-400 font-semibold">Home</a>
+      <a href="./page/shop.html" class="block p-3 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300">Shop</a>
+      <a href="./page/about.html"
+        class="block p-3 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300">About</a>
+      <a href="./page/contact.html"
+        class="block p-3 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300">Contact</a>
+      <!-- Mobile Menu Login Button -->
+      <a id="loginBtnMobile"
+        class="block p-3 bg-[#0071e3] dark:bg-blue-700 text-white rounded-lg text-center mt-2 hover:bg-[#f7f2ee] dark:hover:bg-gray-700 hover:text-[#0071e3] dark:hover:text-blue-400">
+        Login
+      </a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-[#f7f7f7] dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
+      <!-- Text Content -->
+      <div class="flex-1 text-center md:text-left py-6">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-[#0071e3] dark:text-blue-400 mb-4 leading-tight">
+          Discover Your Collections<br />
+          <span class="text-gray-800 dark:text-white">With Camera Shop</span>
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+          Shop the latest trends in cameras. Quality, comfort, and style for
+          every occasion.
+        </p>
+        <a href="/page/shop.html"
+          class="inline-block bg-[#0071e3] dark:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-[#f7f2ee] dark:hover:bg-gray-700 hover:text-[#0071e3] dark:hover:text-blue-400 border border-[#0071e3] dark:border-blue-700 transition">
+          Shop Now
+        </a>
+      </div>
+
+      <!-- Hero Image -->
+      <div class="flex-1 flex justify-center py-3 lg:h-[350px]">
+        <img src="https://cdn.mos.cms.futurecdn.net/xgCvDXPeqkbSZbK9Vn5d8S.gif" alt="CameraShop Hero"
+          class="rounded-xl shadow-lg w-full max-w-md object-cover" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="py-16 bg-white dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-[#0071e3] dark:text-blue-400 mb-10 text-center">
+        Categories
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <!-- Example Category -->
+        <div
+          class="bg-[#f7f7f7] dark:bg-gray-700 rounded-xl shadow-md p-6 flex flex-col items-center hover:scale-105 hover:shadow-lg transition">
+          <svg class="w-12 h-12 text-[#0071e3] dark:text-blue-400 mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 9a3 3 0 100 6 3 3 0 000-6zm8-3h-2.586l-.707-.707A1 1 0 0016 5h-8a1 1 0 00-.707.293L6.586 6H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2zm0 12H4V8h3.172l1-1h7.656l1 1H20v10z" />
+          </svg>
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+            Camera-Sony
+          </h3>
+          <p class="text-gray-600 dark:text-gray-300 text-center">
+            High-quality Sony cameras for professional and casual photography.
+          </p>
+        </div>
+
+        <!-- Example Category -->
+        <div
+          class="bg-[#f7f7f7] dark:bg-gray-700 rounded-xl shadow-md p-6 flex flex-col items-center hover:scale-105 hover:shadow-lg transition">
+          <!-- Nikon Camera Icon -->
+          <svg class="w-12 h-12 text-[#0071e3] dark:text-blue-400 mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M20 5h-3.172l-1.414-1.414A2 2 0 0014 3H10a2 2 0 00-1.414.586L7.172 5H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8zm7-9h-2V6h2v2z" />
+          </svg>
+
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+            Camera Nikon
+          </h3>
+          <p class="text-gray-600 dark:text-gray-300 text-center">
+            Explore Nikon cameras for precision and professional photography.
+          </p>
+        </div>
+
+        <div
+          class="bg-[#f7f7f7] dark:bg-gray-700 rounded-xl shadow-md p-6 flex flex-col items-center hover:scale-105 hover:shadow-lg transition">
+          <!-- Canon Camera Icon -->
+          <svg class="w-12 h-12 text-[#D31C1C] mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M20 5h-3.172l-1.414-1.414A2 2 0 0014 3H10a2 2 0 00-1.414.586L7.172 5H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8zm7-9h-2V6h2v2z" />
+          </svg>
+
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+            Camera Canon
+          </h3>
+          <p class="text-gray-600 dark:text-gray-300 text-center">
+            Explore Nikon cameras for precision and professional photography.
+          </p>
+        </div>
+        <div
+          class="bg-[#f7f7f7] dark:bg-gray-700 rounded-xl shadow-md p-6 flex flex-col items-center hover:scale-105 hover:shadow-lg transition">
+          <!-- Lumix Camera Icon -->
+          <svg class="w-12 h-12 text-gray-800 mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M20 5h-3.172l-1.414-1.414A2 2 0 0014 3H10a2 2 0 00-1.414.586L7.172 5H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8zm7-9h-2V6h2v2z" />
+          </svg>
+
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+            Camera Lumix
+          </h3>
+          <p class="text-gray-600 dark:text-gray-300 text-center">
+            Explore Lumix cameras for precision and professional photography
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Cameras -->
+  <section class="py-16 bg-[#f7f7f7] dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-[#0071e3] dark:text-blue-400 mb-10 text-center">
+        Popular Cameras
+      </h2>
+      <div id="popular-cameras" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <!-- JavaScript will inject cards here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Brands Marquee -->
+  <section class="bg-white dark:bg-gray-800 py-6">
+    <div class="max-w-7xl mx-auto px-4">
+      <!-- Header -->
+      <div class="flex items-center mb-4">
+        <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M8 12h8"></path>
+        </svg>
+        <span class="text-2xl font-bold text-[#0071e3] dark:text-blue-400">Camera-Shop Brands</span>
+      </div>
+
+      <!-- Marquee -->
+      <div class="overflow-hidden relative">
+        <div class="flex space-x-8 animate-marquee">
+          <!-- Repeat your brand cards here -->
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M20 5h-3.172l-1.414-1.414A2 2 0 0014 3H10a2 2 0 00-1.414.586L7.172 5H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8zm7-9h-2V6h2v2z" />
+            </svg>
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Sony
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                High-quality Sony cameras for professional and casual
+                photography.
+              </div>
+            </div>
+
+          </div>
+
+          <div
+            class="brand-card bg-[#fff0f0] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+            <svg class="w-8 h-8 text-[#D31C1C] dark:text-red-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M20 5h-3.172l-1.414-1.414A2 2 0 0014 3H10a2 2 0 00-1.414.586L7.172 5H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8zm7-9h-2V6h2v2z" />
+            </svg>
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Canon
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Explore Canon cameras for reliable and high-quality
+                photography.
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Lumix-Style Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M4 7h2.2l1.3-2.2A2 2 0 0 1 9.3 4h5.4a2 2 0 0 1 1.8 1.1L18 7h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zm8 11.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm7-9.5h-2.2c-.3 0-.6-.2-.8-.4l-.5-.8h3.5v1.2z" />
+              <rect x="18.5" y="9" width="2" height="8" rx=".8" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Lumix
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Panasonic Lumix cameras known for video excellence and portability.
+              </div>
+            </div>
+
+          </div>
+
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Nikon-Style Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M4 8h2l1-2.2A2 2 0 0 1 8.8 4h6.4A2 2 0 0 1 17 5.8L18 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zm8 10a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Nikon
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Nikon cameras delivering outstanding image clarity and dynamic range.
+              </div>
+            </div>
+
+          </div>
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Fujifilm-Style Retro Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M3 8h3l1-1.6A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.7.9L18 8h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm4 0h2V7H7v1zm5 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Fujifilm
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Fujifilm cameras featuring film-like colors and classic retro designs.
+              </div>
+            </div>
+
+          </div>
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Olympus-Style Compact Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M3 8h3l.8-1.5A2 2 0 0 1 8.6 5h6.8a2 2 0 0 1 1.8 1.1L18 8h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Olympus
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Olympus cameras designed for travel with lightweight Micro Four Thirds bodies.
+              </div>
+            </div>
+
+          </div>
+          <div
+            class="brand-card bg-[#f7f2ee] dark:bg-gray-700 rounded-xl shadow-md p-4 flex items-center min-w-[220px] hover:scale-105 hover:shadow-lg transition">
+
+            <!-- Leica-Style Rangefinder Camera Icon -->
+            <svg class="w-8 h-8 text-[#0071e3] dark:text-blue-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M3 9h3l1-2a2 2 0 0 1 1.8-1h6.4a2 2 0 0 1 1.8 1l1 2h3a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zm3-1h2V7H6v1zm6 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+            </svg>
+
+            <div>
+              <div class="text-lg font-bold text-gray-800 dark:text-white">
+                Camera-Leica
+              </div>
+              <div class="text-sm text-gray-500 dark:text-gray-300">
+                Leica cameras offering premium craftsmanship and legendary optical quality.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="py-16 bg-white dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row gap-12 items-center">
+      <!-- Contact Form -->
+      <div class="flex-1 w-full">
+        <h2 class="text-3xl font-bold text-[#0071e3] dark:text-blue-400 mb-6 text-center md:text-left">
+          Contact Us
+        </h2>
+        <form class="bg-[#f7f7f7] dark:bg-gray-700 rounded-xl shadow-md p-6 md:p-8 space-y-4">
+          <input type="text" placeholder="Name"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-[#fa7c59] transition bg-white dark:bg-gray-600 text-gray-900 dark:text-white" />
+          <input type="email" placeholder="Email"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-[#fa7c59] transition bg-white dark:bg-gray-600 text-gray-900 dark:text-white" />
+          <textarea placeholder="Message" rows="4"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-[#fa7c59] transition bg-white dark:bg-gray-600 text-gray-900 dark:text-white"></textarea>
+          <button type="submit"
+            class="bg-[#0071e3] dark:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#f7f2ee] dark:hover:bg-gray-600 hover:text-[#0071e3] dark:hover:text-blue-400 border border-[#0071e3] dark:border-blue-700 transition w-full md:w-auto">
+            Send Message
+          </button>
+        </form>
+      </div>
+
+      <!-- Map -->
+      <div class="flex-1 w-full flex justify-center mt-8 md:mt-0">
+        <div class="rounded-xl overflow-hidden shadow-md w-full max-w-md h-[350px]">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3949.5728788335387!2d104.88793507510012!3d11.56220538863841!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310951adb4d4041d%3A0x8a90e729f62ad800!2sETEC2!5e1!3m2!1sen!2skh!4v1763055662301!5m2!1sen!2skh"
+            width="600" height="450" style="border: 0" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#0071e3] dark:bg-gray-800 text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+      <!-- Logo & Brand -->
+      <div class="flex items-center gap-3">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M8 12h8"></path>
+        </svg>
+        <span class="text-2xl font-bold">CAMERA-STORE</span>
+      </div>
+      <!-- Footer Links -->
+      <div class="flex flex-wrap gap-6 text-base font-medium">
+        <a href="/index.html" class="hover:underline">Home</a>
+        <a href="/page/about.html" class="hover:underline">About</a>
+        <a href="/page/shop.html" class="hover:underline">Shop</a>
+        <a href="/page/contact.html" class="hover:underline">Contact</a>
+        <a href="#" class="hover:underline">Privacy Policy</a>
+      </div>
+      <!-- Social Icons -->
+      <div class="flex gap-4">
+        <!-- Icorn Facebook -->
+        <a href="#" aria-label="Facebook" class="hover:text-[#f7f2ee] transition">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 5 3.657 9.127 8.438 9.877v-6.987h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.127 22 17 22 12z" />
+          </svg>
+        </a>
+        <!-- Icorn Telegram -->
+        <a href="https://t.me/yourusername" target="_blank" aria-label="Telegram"
+          class="hover:text-[#0088cc] transition duration-300">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M9.999 15.172l-.387 4.327c.553 0 .793-.237 1.08-.521l2.588-2.47 5.367 3.925c.984.54 1.684.256 1.938-.91l3.507-16.426c.36-1.671-.604-2.322-1.66-1.92L1.23 10.38c-1.61.63-1.585 1.54-.274 1.95l4.946 1.545L17.57 6.84c.603-.39 1.152-.175.7.25L9.999 15.172z" />
+          </svg>
+        </a>
+        <!-- Icorn Twitter -->
+        <a href="#" aria-label="Twitter" class="hover:text-[#f7f2ee] transition">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M22.46 6c-.77.35-1.6.59-2.47.7a4.3 4.3 0 001.88-2.37 8.59 8.59 0 01-2.72 1.04A4.28 4.28 0 0016.11 4c-2.37 0-4.29 1.92-4.29 4.29 0 .34.04.67.11.99C7.69 9.13 4.07 7.13 1.64 4.16c-.37.63-.58 1.36-.58 2.14 0 1.48.75 2.79 1.89 3.56a4.28 4.28 0 01-1.94-.54v.05c0 2.07 1.47 3.8 3.42 4.19-.36.1-.74.16-1.13.16-.28 0-.54-.03-.8-.08.54 1.68 2.11 2.9 3.97 2.93A8.6 8.6 0 012 19.54a12.13 12.13 0 006.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19-.01-.38-.02-.57A8.72 8.72 0 0024 5.5a8.6 8.6 0 01-2.54.7z" />
+          </svg>
+        </a>
+        <!-- Icorn Instagram -->
+        <a href="#" aria-label="Instagram" class="hover:text-[#f7f2ee] transition">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5A4.25 4.25 0 0016.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 110 10.5 5.25 5.25 0 010-10.5zm0 1.5a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zm5.25.75a1 1 0 110 2 1 1 0 010-2z" />
+          </svg>
+        </a>
+
+        <!-- Icorn Tiktok -->
+        <a href="#" aria-label="TikTok" class="hover:text-[#f7f2ee] transition">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12.75 2h2.25a4.5 4.5 0 004.5 4.5v2.25a6.75 6.75 0 01-4.5-1.65v7.65a5.25 5.25 0 11-5.25-5.25h.75v2.25h-.75a3 3 0 100 6 3 3 0 003-3V2z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="mt-8 text-center text-sm text-[#f7f2ee]">
+      © 2023 CAMERA-STORE. All rights reserved.
+    </div>
+  </footer>
+</body>
+
+</html>
+
+<!-- <script src="./page/data/products.js"></script> -->
+<script>
+  // Function to generate star ratings
+  function generateStars(rating) {
+    const full = Math.floor(rating);
+    const half = rating % 1 >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+
+    let stars = "";
+    for (let i = 0; i < full; i++)
+      stars += `<i class="fa-solid fa-star text-yellow-400"></i>`;
+    for (let i = 0; i < half; i++)
+      stars += `<i class="fa-solid fa-star-half-stroke text-yellow-400"></i>`;
+    for (let i = 0; i < empty; i++)
+      stars += `<i class="fa-regular fa-star text-yellow-400"></i>`;
+    return stars;
+  }
+
+  // Render popular cameras from products.js
+  const popularCameras = document.getElementById("popular-cameras");
+
+  const card = document.createElement("div");
+  // Filter products with rating > 4
+  const topRatedProducts = products.filter((product) => product.rating > 4);
+
+  // Render each top-rated product
+  topRatedProducts.forEach((product) => {
+    const card = document.createElement("div");
+    card.className =
+      "bg-white dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden flex flex-col hover:shadow-sm transition card-hover";
+    card.innerHTML = `
+    <img src="${product.image}" alt="${product.name
+      }" class="w-full h-64 object-cover p-4">
+    <div class="p-4 flex-1 flex flex-col justify-between">
+      <h3 class="text-xl font-semibold mb-2 dark:text-white">${product.name
+      }</h3>
+      <p class="text-gray-600 dark:text-gray-300 mb-2 line-clamp-1">${product.description
+      }</p>
+     
+        <div class="mb-2 dark:text-gray-300">
+        ${generateStars(product.rating)} ${product.rating} | <span>${product.views
+      } views</span>
+      </div>
+      <div class="text-lg font-bold flex items-center justify-around">
+        <span class="block dark:text-white">$${product.price.toFixed(2)}</span>
+        <a href="./page/ProductDetailPage.html?id=${product.id
+      }" class="px-3 py-2 bg-blue-700 dark:bg-blue-600 text-white rounded-lg cursor-pointer">View</a>
+      </div>
+    </div>
+  `;
+    document.getElementById("popular-cameras").appendChild(card);
+  });
+</script>
+<!-- Mobile Menu Toggle Script -->
+<script>
+  const mobileBtn = document.getElementById("mobileMenuBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+
+  mobileBtn.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+</script>
+
+<script>
+  // Handle Login/Logout for both desktop and mobile buttons
+  const loginBtnDesktop = document.getElementById("loginBtnDesktop");
+  const loginBtnMobile = document.getElementById("loginBtnMobile");
+
+  function updateLoginButtons() {
+    const loggedIn = localStorage.getItem("loggedIn") === "true";
+    [loginBtnDesktop, loginBtnMobile].forEach((btn) => {
+      if (loggedIn) {
+        btn.textContent = "Logout";
+        btn.href = "#";
+        btn.onclick = () => {
+          localStorage.removeItem("loggedIn");
+          localStorage.removeItem("username");
+          localStorage.clear();
+          window.location.href = "./page/login.html"; // redirect after logout
+        };
+      } else {
+        btn.textContent = "Login";
+        btn.href = "./page/login.html";
+        btn.onclick = null;
+      }
+    });
+  }
+
+  updateLoginButtons();
+</script>
+
+<script>
+  // Handle Sign Up button for both desktop and mobile
+  const signupBtnDesktop = document.getElementById("signupBtnDesktop");
+  const signupBtnMobile = document.getElementById("signupBtnMobile");
+
+  function updateSignupButtons() {
+    const loggedIn = localStorage.getItem("loggedIn") === "true";
+
+    [signupBtnDesktop, signupBtnMobile].forEach((btn) => {
+      if (loggedIn) {
+        // If already logged in, show "Profile" or "Account" instead
+        btn.textContent = "Account";
+        btn.href = "./page/account.html"; // redirect to account page
+        btn.onclick = null;
+      } else {
+        // If not logged in, show Sign Up
+        btn.textContent = "Sign Up";
+        btn.href = "./page/signup.html"; // redirect to signup page
+        btn.onclick = null; // default navigation
+      }
+    });
+  }
+
+  updateSignupButtons();
+</script>
+
+
+<script>
+  // Dark Mode Functionality
+  const darkModeToggleDesktop = document.getElementById(
+    "darkModeToggleDesktop"
+  );
+  const darkModeToggleMobile = document.getElementById("darkModeToggleMobile");
+  const darkModeIconDesktop = document.getElementById("darkModeIconDesktop");
+  const darkModeIconMobile = document.getElementById("darkModeIconMobile");
+
+  // Check for saved dark mode preference
+  const isDarkMode = localStorage.getItem("darkMode") === "true";
+
+  // Apply dark mode if enabled
+  if (isDarkMode) {
+    document.documentElement.classList.add("dark");
+    darkModeIconDesktop.classList.remove("fa-moon");
+    darkModeIconDesktop.classList.add("fa-sun");
+    darkModeIconMobile.classList.remove("fa-moon");
+    darkModeIconMobile.classList.add("fa-sun");
+  }
+
+  // Toggle dark mode
+  function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle("dark");
+
+    // Update icons
+    if (isDark) {
+      darkModeIconDesktop.classList.remove("fa-moon");
+      darkModeIconDesktop.classList.add("fa-sun");
+      darkModeIconMobile.classList.remove("fa-moon");
+      darkModeIconMobile.classList.add("fa-sun");
+    } else {
+      darkModeIconDesktop.classList.remove("fa-sun");
+      darkModeIconDesktop.classList.add("fa-moon");
+      darkModeIconMobile.classList.remove("fa-sun");
+      darkModeIconMobile.classList.add("fa-moon");
+    }
+
+    // Save preference
+    localStorage.setItem("darkMode", isDark);
+  }
+
+  // Add event listeners
+  darkModeToggleDesktop.addEventListener("click", toggleDarkMode);
+  darkModeToggleMobile.addEventListener("click", toggleDarkMode);
+</script>
